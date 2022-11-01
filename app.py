@@ -6,11 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 # Set Page configuration
 # Read more at https://docs.streamlit.io/1.6.0/library/api-reference/utilities/st.set_page_config
-st.set_page_config(
-     page_title='Predict Flower Species',
-     page_icon='🌷',
-     layout='wide',
-     initial_sidebar_state='expanded')
+st.set_page_config(page_title='Predict Flower Species', page_icon='🌷', layout='wide', initial_sidebar_state='expanded')
 
 # Set title of the app
 st.title('🌷 Predict Flower Species')
@@ -19,7 +15,7 @@ st.title('🌷 Predict Flower Species')
 df = pd.read_csv('iris.csv')
 
 # Set input widgets
-st.sidebar.subheader('Input features')
+st.sidebar.subheader('Select flower attributes')
 sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.8)
 sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.1)
 petal_length = st.sidebar.slider('Petal length', 1.0, 6.9, 3.8)
@@ -33,25 +29,25 @@ y = df.Species
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Build model
-rf = RandomForestClassifier(max_depth=2, max_features=4, n_estimators=200, random_state=42)
-rf.fit(X_train, y_train)
+model = RandomForestClassifier(max_depth=2, max_features=4, n_estimators=200, random_state=42)
+model.fit(X_train, y_train)
 
 # Generate predictions
-y_pred = rf.predict([[sepal_length, sepal_width, petal_length, petal_width]])
+y_pred = model.predict([[sepal_length, sepal_width, petal_length, petal_width]])
 
 # Display EDA
 st.subheader('Exploratory Data Analysis')
 st.write('The data is grouped by the class and the variable mean is computed for each class.')
 groupby_species_mean = df.groupby('Species').mean()
 st.write(groupby_species_mean)
-st.line_chart(groupby_species_mean.T)
+st.bar_chart(groupby_species_mean.T)
 
 # Print input features
-st.subheader('Input features')
+st.subheader('Variables in Data Set')
 input_feature = pd.DataFrame([[sepal_length, sepal_width, petal_length, petal_width]],
                             columns=['sepal_length', 'sepal_width', 'petal_length', 'petal_width'])
 st.write(input_feature)
 
 # Print prediction output
-st.subheader('Output')
-st.metric('Predicted class', y_pred[0], '')
+st.subheader('Prediction')
+st.metric('Predicted Flower Species is :', y_pred[0], '')
